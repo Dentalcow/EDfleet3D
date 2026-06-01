@@ -1,0 +1,10 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_QR_SYSTEM_NAME": "PrintPing",
+    "NEXT_PUBLIC_CONTACT_EMAIL": "hello@edfleet3d.com.au",
+    "FORMSPREE_ENDPOINT": "@formspree_endpoint"
+  }
+}
