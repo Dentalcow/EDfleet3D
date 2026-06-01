@@ -143,7 +143,7 @@ export default function ContactForm({
         phone: "",
         message: "",
       }));
-    } catch (err) {
+    } catch {
       setStatus("error");
       setSubmitError(
         "Unable to send right now. Please check your details and try again."

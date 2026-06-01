@@ -34,7 +34,7 @@ export default function Training() {
       setStatus("success");
       setName("");
       setEmail("");
-    } catch (err) {
+    } catch {
       setStatus("error");
       setError("Something went wrong. Please try again.");
     }
