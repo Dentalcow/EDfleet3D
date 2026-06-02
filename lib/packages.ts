@@ -1,4 +1,4 @@
-// ⚠️ TBD — replace all placeholder values below with final content before launch
+// Update all TBD values below before launch
 
 export type ServicePackage = {
   id: string;
@@ -16,48 +16,38 @@ export type ServicePackage = {
 export const packages: ServicePackage[] = [
   {
     id: "basic",
-    name: "Basic Maintenance", // TBD
-    badge: "Most Popular", // TBD or remove
-    unitPrice: null, // TBD — price per printer per visit
+    name: "Basic Maintenance",
+    badge: "Most Popular",
+    unitPrice: null,
     priceLabel: "Pricing coming soon",
-    frequency: "TBD — e.g. once per term", // TBD
-    description:
-      "TBD — short summary of what this package covers and who it suits.",
-    includes: [
-      "TBD — line item 1",
-      "TBD — line item 2",
-      "TBD — line item 3",
-    ],
+    frequency: "TBD",
+    description: "TBD",
+    includes: ["TBD", "TBD", "TBD"],
     scaledByPrinterCount: true,
     cta: "Select This Package",
   },
   {
     id: "deep-clean",
-    name: "Advanced Deep Clean", // TBD
-    badge: "Recommended", // TBD or remove
-    unitPrice: null, // TBD — price per printer per visit
+    name: "Advanced Deep Clean",
+    badge: "Recommended",
+    unitPrice: null,
     priceLabel: "Pricing coming soon",
-    frequency: "TBD — e.g. once per semester",
-    description:
-      "TBD — short summary of what this package covers and who it suits.",
-    includes: [
-      "TBD — everything in Basic, plus:",
-      "TBD — line item 1",
-      "TBD — line item 2",
-    ],
+    frequency: "TBD",
+    description: "TBD",
+    includes: ["TBD", "TBD"],
     scaledByPrinterCount: true,
     cta: "Select This Package",
   },
   {
     id: "urgent",
-    name: "Urgent Callout", // TBD
+    name: "Urgent Callout",
     badge: null,
-    unitPrice: null, // TBD — fixed fee, does not scale
+    unitPrice: null,
     priceLabel: "From $TBD",
-    frequency: "On demand",
-    description:
-      "TBD — short summary, e.g. same-day or next-day response when a printer goes down.",
-    includes: ["TBD — line item 1", "TBD — line item 2"],
+    frequency:
+      "On demand — outside school hours only. Higher rate applies during term time.",
+    description: "TBD",
+    includes: ["TBD", "TBD"],
     scaledByPrinterCount: false,
     cta: "Request Urgent Callout",
   },

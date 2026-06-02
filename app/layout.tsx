@@ -21,18 +21,10 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "edfleet3d — 3D Printer Maintenance for Sydney Schools",
   description:
-    "Affordable 3D printer servicing, calibration, and maintenance packages for NSW public schools. Fast callouts, term-based plans, and QR error reporting.",
-  keywords: [
-    "3D printer repair Sydney",
-    "school 3D printer maintenance",
-    "3D printer service NSW",
-    "edfleet3d",
-  ],
+    "Affordable 3D printer servicing and maintenance packages for NSW public schools. Fast response, term-based plans, and QR error reporting.",
   openGraph: {
     title: "edfleet3d",
     description: "Keeping school printers printing.",
-    url: "https://edfleet3d.com.au",
-    siteName: "edfleet3d",
     locale: "en_AU",
     type: "website",
   },
