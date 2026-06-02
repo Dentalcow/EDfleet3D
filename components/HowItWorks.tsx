@@ -6,12 +6,12 @@ const steps = [
   {
     title: "Get a Quote",
     description:
-      "Choose your package, enter your printer count, submit the contact form. We’ll confirm within 24 hours.",
+      "Choose your package, enter your printer count, and submit the form. We will get back to you within 1-2 business days.",
   },
   {
     title: "We Come to You",
     description:
-      "A qualified technician visits your school at a pre-arranged time. No equipment to ship, no downtime.",
+      "We visit your school at a pre-arranged time. No equipment to ship, no downtime.",
   },
   {
     title: "Back to Printing",

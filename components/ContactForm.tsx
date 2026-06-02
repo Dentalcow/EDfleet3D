@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { packages } from "@/lib/packages";
 
 type ContactFormProps = {
   prefillSubject: string;
@@ -18,14 +17,33 @@ type FormState = {
   phone: string;
   subject: string;
   printerCount: string;
+  foundUs: string;
   message: string;
 };
 
 const roleOptions = [
   "Teacher",
-  "IT Coordinator",
-  "Business Manager",
+  "Head Teacher",
+  "Admin",
+  "Executive",
   "Principal",
+  "IT",
+  "Other",
+];
+
+const subjectOptions = [
+  "Maintenance Package",
+  "Urgent Callout",
+  "QR Error Reporting",
+  "Teacher Training",
+  "Something Else",
+];
+
+const foundUsOptions = [
+  "Google Search",
+  "Recommended by a colleague",
+  "Social Media",
+  "My school already uses edfleet3d",
   "Other",
 ];
 
@@ -33,17 +51,6 @@ export default function ContactForm({
   prefillSubject,
   prefillPrinters,
 }: ContactFormProps) {
-  const packageSubjects = packages.map((pkg) => pkg.name);
-  const subjectOptions = Array.from(
-    new Set([
-      "General Enquiry",
-      ...packageSubjects,
-      "PrintPing Enquiry",
-      "Training EOI",
-      "Fleet Pricing",
-    ])
-  );
-
   const [formState, setFormState] = useState<FormState>({
     name: "",
     school: "",
@@ -51,12 +58,11 @@ export default function ContactForm({
     email: "",
     phone: "",
     subject: subjectOptions[0] ?? "",
-    printerCount: prefillPrinters ? String(prefillPrinters) : "3",
+    printerCount: prefillPrinters ? String(prefillPrinters) : "",
+    foundUs: "",
     message: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>(
-    {}
-  );
+  const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [submitError, setSubmitError] = useState("");
 
@@ -75,10 +81,7 @@ export default function ContactForm({
     }
   }, [prefillPrinters]);
 
-  const handleChange = (
-    field: keyof FormState,
-    value: string
-  ) => {
+  const handleChange = (field: keyof FormState, value: string) => {
     setFormState((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
@@ -88,15 +91,16 @@ export default function ContactForm({
 
     if (!formState.name.trim()) nextErrors.name = "Required.";
     if (!formState.school.trim()) nextErrors.school = "Required.";
+    if (!formState.role.trim()) nextErrors.role = "Required.";
     if (!formState.email.trim()) nextErrors.email = "Required.";
     if (!formState.subject.trim()) nextErrors.subject = "Required.";
     if (!formState.message.trim()) nextErrors.message = "Required.";
 
-    const printerValue = Number(formState.printerCount);
-    if (!formState.printerCount.trim() || Number.isNaN(printerValue)) {
-      nextErrors.printerCount = "Required.";
-    } else if (printerValue < 1) {
-      nextErrors.printerCount = "Must be at least 1.";
+    if (formState.printerCount.trim()) {
+      const printerValue = Number(formState.printerCount);
+      if (Number.isNaN(printerValue) || printerValue < 1) {
+        nextErrors.printerCount = "Must be at least 1.";
+      }
     }
 
     setErrors(nextErrors);
@@ -107,9 +111,7 @@ export default function ContactForm({
     event.preventDefault();
     setSubmitError("");
 
-    if (!validate()) {
-      return;
-    }
+    if (!validate()) return;
 
     setStatus("submitting");
 
@@ -117,21 +119,10 @@ export default function ContactForm({
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formState.name,
-          school: formState.school,
-          role: formState.role,
-          email: formState.email,
-          phone: formState.phone,
-          subject: formState.subject,
-          printerCount: formState.printerCount,
-          message: formState.message,
-        }),
+        body: JSON.stringify(formState),
       });
 
-      if (!response.ok) {
-        throw new Error("Submission failed");
-      }
+      if (!response.ok) throw new Error("Submission failed");
 
       setStatus("success");
       setFormState((prev) => ({
@@ -141,7 +132,9 @@ export default function ContactForm({
         role: "",
         email: "",
         phone: "",
+        foundUs: "",
         message: "",
+        printerCount: "",
       }));
     } catch {
       setStatus("error");
@@ -150,6 +143,9 @@ export default function ContactForm({
       );
     }
   };
+
+  const inputClass =
+    "mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary";
 
   return (
     <section id="contact" className="bg-background py-20 md:py-32">
@@ -163,8 +159,7 @@ export default function ContactForm({
               Tell us about your printers
             </h2>
             <p className="text-muted">
-              Complete the form and we&apos;ll confirm your quote or callout
-              within 24 hours.
+              Complete the form and we will get back to you within 1-2 business days.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-surface p-6 md:p-8">
@@ -175,7 +170,7 @@ export default function ContactForm({
                 </div>
                 <div>
                   <p className="text-lg font-semibold">
-                    Thanks! We&apos;ll be in touch within 24 hours.
+                    Thanks! We will be in touch within 1-2 business days.
                   </p>
                   <button
                     type="button"
@@ -194,141 +189,117 @@ export default function ContactForm({
                     <input
                       type="text"
                       value={formState.name}
-                      onChange={(event) =>
-                        handleChange("name", event.target.value)
-                      }
-                      className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                      onChange={(e) => handleChange("name", e.target.value)}
+                      className={inputClass}
                     />
-                    {errors.name && (
-                      <p className="mt-1 text-xs text-secondary">
-                        {errors.name}
-                      </p>
-                    )}
+                    {errors.name && <p className="mt-1 text-xs text-secondary">{errors.name}</p>}
                   </div>
                   <div>
                     <label className="text-sm text-muted">School Name*</label>
                     <input
                       type="text"
                       value={formState.school}
-                      onChange={(event) =>
-                        handleChange("school", event.target.value)
-                      }
-                      className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                      onChange={(e) => handleChange("school", e.target.value)}
+                      className={inputClass}
                     />
-                    {errors.school && (
-                      <p className="mt-1 text-xs text-secondary">
-                        {errors.school}
-                      </p>
-                    )}
+                    {errors.school && <p className="mt-1 text-xs text-secondary">{errors.school}</p>}
                   </div>
                 </div>
+
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label className="text-sm text-muted">Your Role</label>
+                    <label className="text-sm text-muted">What role best describes you?*</label>
                     <select
                       value={formState.role}
-                      onChange={(event) =>
-                        handleChange("role", event.target.value)
-                      }
-                      className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                      onChange={(e) => handleChange("role", e.target.value)}
+                      className={inputClass}
                     >
                       <option value="">Select a role</option>
                       {roleOptions.map((role) => (
-                        <option key={role} value={role}>
-                          {role}
-                        </option>
+                        <option key={role} value={role}>{role}</option>
                       ))}
                     </select>
+                    {errors.role && <p className="mt-1 text-xs text-secondary">{errors.role}</p>}
                   </div>
                   <div>
                     <label className="text-sm text-muted">Email Address*</label>
                     <input
                       type="email"
                       value={formState.email}
-                      onChange={(event) =>
-                        handleChange("email", event.target.value)
-                      }
-                      className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                      onChange={(e) => handleChange("email", e.target.value)}
+                      className={inputClass}
                     />
-                    {errors.email && (
-                      <p className="mt-1 text-xs text-secondary">
-                        {errors.email}
-                      </p>
-                    )}
+                    {errors.email && <p className="mt-1 text-xs text-secondary">{errors.email}</p>}
                   </div>
                 </div>
+
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="text-sm text-muted">Phone Number</label>
                     <input
                       type="tel"
                       value={formState.phone}
-                      onChange={(event) =>
-                        handleChange("phone", event.target.value)
-                      }
-                      className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                      onChange={(e) => handleChange("phone", e.target.value)}
+                      className={inputClass}
                     />
                   </div>
                   <div>
-                    <label className="text-sm text-muted">Subject*</label>
+                    <label className="text-sm text-muted">How can we help?*</label>
                     <select
                       value={formState.subject}
-                      onChange={(event) =>
-                        handleChange("subject", event.target.value)
-                      }
-                      className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                      onChange={(e) => handleChange("subject", e.target.value)}
+                      className={inputClass}
                     >
                       {subjectOptions.map((subject) => (
-                        <option key={subject} value={subject}>
-                          {subject}
-                        </option>
+                        <option key={subject} value={subject}>{subject}</option>
                       ))}
                     </select>
-                    {errors.subject && (
-                      <p className="mt-1 text-xs text-secondary">
-                        {errors.subject}
-                      </p>
-                    )}
+                    {errors.subject && <p className="mt-1 text-xs text-secondary">{errors.subject}</p>}
                   </div>
                 </div>
-                <div>
-                  <label className="text-sm text-muted">
-                    Number of Printers*
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={formState.printerCount}
-                    onChange={(event) =>
-                      handleChange("printerCount", event.target.value)
-                    }
-                    className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
-                  />
-                  {errors.printerCount && (
-                    <p className="mt-1 text-xs text-secondary">
-                      {errors.printerCount}
-                    </p>
-                  )}
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm text-muted">Number of Printers</label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={formState.printerCount}
+                      onChange={(e) => handleChange("printerCount", e.target.value)}
+                      className={inputClass}
+                    />
+                    {errors.printerCount && <p className="mt-1 text-xs text-secondary">{errors.printerCount}</p>}
+                  </div>
+                  <div>
+                    <label className="text-sm text-muted">How did you find us?</label>
+                    <select
+                      value={formState.foundUs}
+                      onChange={(e) => handleChange("foundUs", e.target.value)}
+                      className={inputClass}
+                    >
+                      <option value="">Select an option</option>
+                      {foundUsOptions.map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
+
                 <div>
                   <label className="text-sm text-muted">Message*</label>
                   <textarea
                     value={formState.message}
-                    onChange={(event) =>
-                      handleChange("message", event.target.value)
-                    }
+                    onChange={(e) => handleChange("message", e.target.value)}
                     rows={4}
-                    className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+                    className={inputClass}
                   />
-                  {errors.message && (
-                    <p className="mt-1 text-xs text-secondary">
-                      {errors.message}
-                    </p>
-                  )}
+                  {errors.message && <p className="mt-1 text-xs text-secondary">{errors.message}</p>}
                 </div>
+
                 {submitError && (
                   <p className="text-sm text-secondary">{submitError}</p>
                 )}
+
                 <button
                   type="submit"
                   disabled={status === "submitting"}

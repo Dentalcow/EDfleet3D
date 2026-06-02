@@ -83,7 +83,7 @@ export default function Packages({
               </div>
               {isFleetPricing && (
                 <p className="text-xs text-primary">
-                  Fleet pricing available — contact us for a custom quote.
+                  Fleet pricing available. Contact us for a custom quote.
                 </p>
               )}
             </div>
@@ -171,12 +171,7 @@ export default function Packages({
         </div>
 
         <p className="mt-8 text-sm text-muted">
-          All prices are GST-inclusive. Fleet pricing available for 10+
-          printers — contact us for a custom quote.
-        </p>
-        <p className="mt-4 text-xs text-muted">
-          TODO for business owner: Update lib/packages.ts with final pricing and
-          package copy before launch.
+          All prices are GST-inclusive. Fleet pricing available for 10+ printers. Contact us for a custom quote.
         </p>
       </div>
     </section>

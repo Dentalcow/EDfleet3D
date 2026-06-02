@@ -38,8 +38,7 @@ export default function Hero({ onPackages, onQuote }: HeroProps) {
             className="max-w-2xl text-lg text-muted sm:text-xl animate-fade-up"
             style={{ animationDelay: "300ms" }}
           >
-            Affordable packages, fast response, zero hassle — so your printers
-            keep printing and your teachers keep teaching.
+            Keep your printers printing and your teachers teaching.
           </p>
           <div
             className="flex flex-wrap gap-4 animate-fade-up"
